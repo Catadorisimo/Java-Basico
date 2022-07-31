@@ -1,17 +1,7 @@
 package tema6;
-//
-
-//
-
-//
-//
-//
-
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Vector;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -50,17 +40,17 @@ public class Main {
         ejercicio9("C:\\Users\\susog\\Desktop\\holaMundo.txt","pruebaIntelli.txt");
 
 //        10.Sorpréndenos creando un programa de tu elección que utilice InputStream, PrintStream, excepciones, un HashMap y un ArrayList, LinkedList o array.
-        ejercicio10();
+        ejercicio10("C:\\Users\\susog\\Desktop\\id.txt","C:\\Users\\susog\\Desktop\\nombres.txt","dioses.txt");
 
     }
 
     public static void ejercicio1(String texto) {
         System.out.println();
         System.out.println("Ejercicio1");
-        String reverse = "";
+        StringBuilder reverse = new StringBuilder();
 
         for (int i = (texto.length()-1); i >= 0 ; i--) {
-            reverse += texto.charAt(i);
+            reverse.append(texto.charAt(i));
         }
 
         System.out.println(reverse);
@@ -97,7 +87,7 @@ public class Main {
         System.out.println();
         System.out.println("Ejercicio4");
 
-        Vector vector = new Vector(5);
+        Vector<Integer> vector = new Vector<>(5);
 
         vector.add(0);
         vector.add(1);
@@ -124,17 +114,13 @@ public class Main {
         System.out.println();
         System.out.println("Ejercicio6");
 
-        ArrayList array = new ArrayList();
+        ArrayList<String> array = new ArrayList<>();
         array.add("AA");
         array.add("AB");
         array.add("AC");
         array.add("AD");
 
-        LinkedList<Object> linked = new LinkedList<>();
-
-        for (Object str:array) {
-            linked.add(str);
-        }
+        LinkedList<Object> linked = new LinkedList<>(array);
 
         for (Object str:array) {
             System.out.println("Valor de ArrayList: " + str);
@@ -149,15 +135,15 @@ public class Main {
         System.out.println();
         System.out.println("Ejercicio7");
 
-        ArrayList<Integer> array = new ArrayList<Integer>();
+        ArrayList<Integer> array = new ArrayList<>();
         for (int i = 1; i <= 10; i++) {
             if(i%2 != 0) {
                 array.add(i);
             }
         }
 
-        for (int i = 0; i < array.size(); i++) {
-            System.out.println(array.get(i));
+        for (Integer integer : array) {
+            System.out.println(integer);
         }
     }
 
@@ -179,15 +165,8 @@ public class Main {
         System.out.println();
         System.out.println("Ejercicio9");
 
-        //        La tarea de la función será realizar la copia del fichero dado en el parámetro "fileIn" al fichero dado en "fileOut".
+        try(InputStream in = new FileInputStream(fileIn);PrintStream out = new PrintStream(fileOut)){
 
-
-
-        try{
-            InputStream in = new FileInputStream(fileIn);
-            PrintStream out = new PrintStream(fileOut);
-
-            try {
                 int datos = in.read();
 
                 while(datos != -1){
@@ -195,24 +174,78 @@ public class Main {
                     out.write((char) datos);
                     datos = in.read();
                 }
+        }catch(FileNotFoundException e){
+            System.out.println("Error, no se encontró el archivo");
 
-            }catch(IOException e){
-                System.out.println("Error IO");
-                e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("Error IO");
+            e.printStackTrace();
+        }
+    }
+
+    public static void ejercicio10(String fileIn1,String fileIn2, String fileOut){
+
+        System.out.println();
+        System.out.println("Ejercicio10");
+
+        String ids = "";
+        String nombres = "";
+
+        ArrayList<String> idsA;
+        ArrayList<String> nombresA;
+        HashMap<String, String> dioses = new HashMap<>();
+
+
+        try(InputStream in1 = new FileInputStream(fileIn1);
+            InputStream in2 = new FileInputStream(fileIn2);
+            PrintStream outF = new PrintStream(fileOut)){
+
+            int datosId = in1.read();
+            int datosNombre = in2.read();
+
+            while(datosId != -1){
+
+                ids += (char)datosId;
+
+                datosId = in1.read();
             }
 
+            while(datosNombre != -1){
+
+                nombres += (char)datosNombre;
+
+                datosNombre = in2.read();
+            }
+
+            idsA = new ArrayList<>(Arrays.asList(ids.split(",")));
+            nombresA = new ArrayList<>(Arrays.asList(nombres.split(",")));
+
+            if(idsA.size() == nombresA.size()){
+                for(int i = 0; i < idsA.size(); i++) {
+                    dioses.put(idsA.get(i), nombresA.get(i));
+                }
+            }
+
+            System.out.println(dioses);
+
+            for (Map.Entry<String, String> e: dioses.entrySet()) {
+                outF.println(e.getValue() + "#" + e.getKey());
+            }
 
         }catch(FileNotFoundException e){
             System.out.println("Error, no se encontró el archivo");
 
+        } catch (IOException e) {
+            System.out.println("Error IO");
+            e.printStackTrace();
         }
 
+
+
+
     }
 
-    public static void ejercicio10() {
-        System.out.println();
-        System.out.println("Ejercicio10");
-    }
+
 
 
 }
